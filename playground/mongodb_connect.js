@@ -14,7 +14,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp', {useNewUrlParser: true}
     const  db = client.db('TodoApp');
     db.collection('User').insertOne( {
         name: 'Manish Kumar',
-        age: '21',
+        age: 21,
         location: '!373-C mandsihafiafho;f'
     }, (err, result)=> {
         if(err) {
