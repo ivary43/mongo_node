@@ -1,6 +1,6 @@
 const  express = require('express');
 const body_parser = require('body-parser');
-
+const  _ = require('lodash');
 
 var {Todo} = require('./models/Todo');
 var {User} = require('./models/User');
@@ -51,6 +51,52 @@ app.get('/todos/:id', (req,res)=> {
         }, (err)=> {
            res.send(err);
         });
+
+    } else {
+        res.status(404).send({text:'Id not found'});
+    }
+
+});
+
+app.delete('/todos/:id', (req, res)=> {
+    var id = req.params.id ;
+    if(ObjectID.isValid(id)) {
+        Todo.findByIdAndRemove(id).then((doc)=> {
+            if(doc) {
+                res.send(doc);
+            } else {
+                res.status(404).send({text:'Id not found ssdss'});
+            }
+
+        }, (err)=> {
+            res.send(err);
+        });
+    } else {
+        res.status(404).send({text:'Id not found'});
+    }
+
+
+});
+
+app.patch('/todos/:id', (req, res)=> {
+    var id = req.params.id ;
+    if(ObjectID.isValid(id)) {
+        var body = _.pick(req.body, ['text', 'completed']);
+
+        if(_.isBoolean(body.completed) && body.completed) {
+            body.completedAt = new Date().getTime() ;
+            body.completed =true;
+        }
+        Todo.findByIdAndUpdate(id, {$set:body}, {new:true}).then((doc)=> {
+            if(doc) {
+                res.send(doc);
+            } else {
+                res.status(404).send({text:'NOt found'});
+            }
+        }, (err)=> {
+            res.send(err);
+        })
+
 
     } else {
         res.status(404).send({text:'Id not found'});
